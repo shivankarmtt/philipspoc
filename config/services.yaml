@@ -1,0 +1,109 @@
+parameters:
+    secret: aFPieoWkaRHNXhF3NkMvqFPsI/o38OTtOgfEq++u77U=
+
+    # customize the full path to external executables
+    # normally they are auto-detected by `which program` or auto-discovered in the configured path in
+    # System Settings -> General -> Additional $PATH variable
+    # but in general it's a good idea to have your programs in your $PATH environment variable (system wide)
+
+    #pimcore_executable_composer: php /opt/vendor/bin/composer.phar
+    #pimcore_executable_html2text: /usr/local/html2text/bin/html2text
+    #pimcore_executable_soffice: /opt/libreoffice/bin/soffice
+    #pimcore_executable_gs: /opt/ghostscript/bin/gs
+    #pimcore_executable_pdftotext: /opt/tools/pdftotext
+    #pimcore_executable_xvfb-run: /opt/tools/xvfb-run
+    #pimcore_executable_pngcrush: /opt/tools/pngcrush
+    #pimcore_executable_zopflipng: /opt/tools/zopflipng
+    #pimcore_executable_pngout: /opt/tools/pngout
+    #pimcore_executable_advpng: /opt/tools/advpng
+    #pimcore_executable_cjpeg: /opt/tools/cjpeg
+    #pimcore_executable_jpegoptim: /opt/tools/jpegoptim
+    #pimcore_executable_php: /usr/local/custom-php/bin/php
+    #pimcore_executable_nice: /opt/tools/nice
+    #pimcore_executable_nohup: /opt/tools/nohup
+    #pimcore_executable_ffmpeg: /opt/tools/ffmpeg
+    #pimcore_executable_exiftool: /opt/tools/exiftool
+    #pimcore_executable_wkhtmltoimage: /usr/local/bin/wkhtmltoimage
+    #pimcore_executable_timeout: /usr/bin/timeout
+    #pimcore_executable_facedetect: /usr/bin/facedetect
+    # graphviz
+    #pimcore_executable_dot: /usr/bin/dot
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        # automatically injects dependencies in your services
+        autowire: true
+        # automatically registers your services as commands, event subscribers, etc.
+        autoconfigure: true
+        # this means you cannot fetch services directly from the container via $container->get()
+        # if you need to do this, you can override this setting on individual services
+        public: false
+    #
+    # CONTROLLERS
+    #
+
+    # auto-register all controllers as services
+    App\Controller\:
+        resource: '../src/Controller'
+        public: true
+        tags: [ 'controller.service_arguments' ]
+
+
+    #
+    # COMMANDS
+    #
+
+    # auto-register all commands as services
+    App\Command\:
+        resource: '../src/Command/*'
+        tags: [ 'console.command' ]
+
+    App\Services\productImportService:
+        public: true
+
+
+
+    # Example custom templating helper
+    # App\Templating\Helper\Example:
+    #     # templating helpers need to be public as they
+    #     # are fetched from the container on demand
+    #     public: true
+    #     tags:
+    #         - { name: templating.helper, alias: fooBar }
+
+    # Example event listener for objects
+    # App\EventListener\TestListener:
+    #     tags:
+    #         - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: onObjectPreUpdate }
+
+    # Example event listener for objects
+    App\EventListener\productImportEventListener:
+        tags:
+           - { name: kernel.event_listener, event: pimcore.bundle_manager.paths.js, method: addJSFiles }
+
+    productImportCallback:
+        class : Elements\Bundle\ProcessManagerBundle\Executor\Callback\General
+        arguments :
+            $name: "productImportCallback"
+            $extJsClass: "pimcore.plugin.processmanager.executor.callback.productImportCallback"
+            $jsFile: "/js/productImportCallback.js"
+        tags:
+            - { name: "elements.processManager.executorCallbackClasses" }
+
+# Configuring an OpenSearch client
+pimcore_open_search_client:
+    clients:
+        default:
+            hosts: ['http://opensearch:9200']
+            password: 'admin'
+            username: 'admin'
+            ssl_verification: false
+            logger_channel: 'pimcore.opensearch'
+            log_404_errors: true #Enable logging of 404 errors (default: false)
+
+# Define the client to be used by your bundle
+pimcore_generic_data_index:
+    index_service:
+        client_params:
+            client_name: default

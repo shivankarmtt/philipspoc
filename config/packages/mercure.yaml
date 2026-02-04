@@ -1,0 +1,7 @@
+mercure:
+  hubs:
+    default:
+      url: 'http://mercure/.well-known/mercure'
+      public_url: 'http://localhost:1337/.well-known/mercure'
+      jwt:
+        secret: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30'

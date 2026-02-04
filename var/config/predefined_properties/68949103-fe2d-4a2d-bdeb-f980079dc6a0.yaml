@@ -1,0 +1,15 @@
+pimcore:
+    properties:
+        predefined:
+            definitions:
+                68949103-fe2d-4a2d-bdeb-f980079dc6a0:
+                    name: 'New Property'
+                    description: null
+                    key: new_key
+                    type: text
+                    data: null
+                    config: null
+                    ctype: document
+                    inheritable: false
+                    creationDate: 1769587455
+                    modificationDate: 1769587455
